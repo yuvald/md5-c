@@ -186,15 +186,13 @@ void md5Step(uint32_t *buffer, uint32_t *input){
 /*
  * Functions that will return a pointer to the hash of the provided input
  */
-uint8_t* md5String(char *input){
+void md5String(char *input, char* result)
+{
 	MD5Context ctx;
 	md5Init(&ctx);
 	md5Update(&ctx, (uint8_t *)input, strlen(input));
-	md5Finalize(&ctx);
-
-	uint8_t *result = malloc(16);
+	md5Finalize(&ctx);	
 	memcpy(result, ctx.digest, 16);
-	return result;
 }
 
 uint8_t* md5File(FILE *file){
@@ -222,4 +220,31 @@ uint8_t* md5File(FILE *file){
  */
 uint32_t rotateLeft(uint32_t x, uint32_t n){
 	return (x << n) | (x >> (32 - n));
+}
+
+uint8_t* md5fromfile(wchar_t *file_path)
+{
+	uint8_t* result = NULL;
+	FILE* fp = _wfopen(file_path, L"rb");
+	if (fp)
+	{
+		result = md5File(fp);
+		if (result)
+		{
+			//free(result);
+		}
+		return result;
+	}
+	else
+	{
+		printf("Error");
+		return NULL;
+	}
+}
+
+
+uint8_t* md5fromstr(char* s, uint8_t *result)
+{
+	md5String(s, result);
+	return result;
 }
